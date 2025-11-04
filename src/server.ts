@@ -77,6 +77,7 @@ app.put('/courses/:id', (req, res) => {
     res.sendStatus(HTTP_STATUSES.OK_200);
 })
 
-
-app.listen(port, () => console.log(`Server running at http://localhost:${port}`));
-
+if (process.env.NODE_ENV !== 'test') {
+    const PORT = 3000;
+    app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
+}
