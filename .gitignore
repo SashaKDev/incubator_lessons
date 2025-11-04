@@ -5,3 +5,4 @@ tsconfig.json
 yarn.lock
 /dist/
 
+/jest.config.mjs
