@@ -1,6 +1,6 @@
 import express from 'express';
 
-const app = express();
+export const app = express();
 const port = 3000;
 app.use(express.json());
 
@@ -77,6 +77,6 @@ app.put('/courses/:id', (req, res) => {
     res.sendStatus(HTTP_STATUSES.OK_200);
 })
 
-app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
-});
+
+app.listen(port, () => console.log(`Server running at http://localhost:${port}`));
+
