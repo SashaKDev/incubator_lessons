@@ -75,9 +75,10 @@ app.put('/courses/:id', (req, res) => {
     }
     foundCourse.title = req.body.title;
     res.sendStatus(HTTP_STATUSES.OK_200);
+});
+app.delete('__test__/data', (req, res) => {
+    db.courses = [];
+    res.sendStatus(HTTP_STATUSES.NO_CONTENT_204);
 })
 
-if (process.env.NODE_ENV !== 'test') {
-    const PORT = 3000;
-    app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
-}
+app.listen(port, () => console.log(`Server running at http://localhost:${port}`));
