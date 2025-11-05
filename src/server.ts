@@ -76,7 +76,7 @@ app.put('/courses/:id', (req, res) => {
     foundCourse.title = req.body.title;
     res.sendStatus(HTTP_STATUSES.OK_200);
 });
-app.delete('__test__/data', (req, res) => {
+app.delete('/__test__/data', (req, res) => {
     db.courses = [];
     res.sendStatus(HTTP_STATUSES.NO_CONTENT_204);
 })
