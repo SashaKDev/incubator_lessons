@@ -1,4 +1,8 @@
 import express, {Request, Response} from 'express';
+import {CreateCourseModel} from "./models/CreateCourseModel";
+import {UpdateCourseModel} from "./models/UpdateCourseModel";
+import {QueryCoursesModel} from "./models/QueryCoursesModel";
+import {CourseViewModel} from "./models/CourseViewModel";
 
 export const app = express();
 const port = 3000;
@@ -25,8 +29,8 @@ const db: { courses: CourseType[] } = {
     ]
 }
 
-app.get('/courses', (req: Request<{}, {}, {}, {title: string}>,
-                     res: Response<CourseType[]>) => {
+app.get('/courses', (req: Request<{}, {}, {}, QueryCoursesModel>,
+                     res: Response<CourseViewModel[]>) => {
     let foundCourses = db.courses;
     if (req.query.title) {
         foundCourses = foundCourses.filter(c => c.title.includes(req.query.title as string));
@@ -36,7 +40,7 @@ app.get('/courses', (req: Request<{}, {}, {}, {title: string}>,
         .json(foundCourses);
 });
 app.get('/courses/:id', (req: Request<{id: string}>,
-                         res: Response<CourseType>) => {
+                         res: Response<CourseViewModel>) => {
     const foundCourse = db.courses.find(c => c.id === +req.params.id);
     if (!foundCourse) {
         res
@@ -46,8 +50,8 @@ app.get('/courses/:id', (req: Request<{id: string}>,
         .status(HTTP_STATUSES.OK_200)
         .json(foundCourse);
 });
-app.post('/courses', (req: Request<{}, {}, {title: string}>,
-                      res: Response<CourseType>) => {
+app.post('/courses', (req: Request<{}, {}, CreateCourseModel>,
+                      res: Response<CourseViewModel>) => {
     if (!req.body.title) {
         res.sendStatus(HTTP_STATUSES.BAD_REQUEST);
         return;
@@ -71,7 +75,7 @@ app.delete('/courses/:id', (req: Request<{id: string}>,
     }
     res.sendStatus(HTTP_STATUSES.OK_200);
 });
-app.put('/courses/:id', (req: Request<{id: string}, {}, {title: string}>,
+app.put('/courses/:id', (req: Request<{id: string}, {}, UpdateCourseModel>,
                          res) => {
     if (!req.body.title) {
         res.sendStatus(HTTP_STATUSES.BAD_REQUEST);
