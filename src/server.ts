@@ -1,8 +1,12 @@
-import express from 'express';
+import express, {Request, Response} from 'express';
 
 export const app = express();
 const port = 3000;
 app.use(express.json());
+
+type CourseType = {
+    id:number, title: string
+}
 
 const HTTP_STATUSES = {
     OK_200: 200,
@@ -12,7 +16,7 @@ const HTTP_STATUSES = {
     BAD_REQUEST: 400,
     NOT_FOUND: 404
 };
-const db = {
+const db: { courses: CourseType[] } = {
     courses: [
         {id: 1, title: 'front-end'},
         {id: 2, title: 'back-end'},
@@ -21,7 +25,8 @@ const db = {
     ]
 }
 
-app.get('/courses', (req, res) => {
+app.get('/courses', (req: Request<{}, {}, {}, {title: string}>,
+                     res: Response<CourseType[]>) => {
     let foundCourses = db.courses;
     if (req.query.title) {
         foundCourses = foundCourses.filter(c => c.title.includes(req.query.title as string));
@@ -30,7 +35,8 @@ app.get('/courses', (req, res) => {
         .status(HTTP_STATUSES.OK_200)
         .json(foundCourses);
 });
-app.get('/courses/:id', (req, res) => {
+app.get('/courses/:id', (req: Request<{id: string}>,
+                         res: Response<CourseType>) => {
     const foundCourse = db.courses.find(c => c.id === +req.params.id);
     if (!foundCourse) {
         res
@@ -40,7 +46,8 @@ app.get('/courses/:id', (req, res) => {
         .status(HTTP_STATUSES.OK_200)
         .json(foundCourse);
 });
-app.post('/courses', (req, res) => {
+app.post('/courses', (req: Request<{}, {}, {title: string}>,
+                      res: Response<CourseType>) => {
     if (!req.body.title) {
         res.sendStatus(HTTP_STATUSES.BAD_REQUEST);
         return;
@@ -54,7 +61,8 @@ app.post('/courses', (req, res) => {
         .status(HTTP_STATUSES.CREATED_201)
         .json(createdCourse);
 });
-app.delete('/courses/:id', (req, res) => {
+app.delete('/courses/:id', (req: Request<{id: string}>,
+                            res) => {
     const deletedCourse = db.courses.find(c => c.id === +req.params.id);
     db.courses = db.courses.filter(c => c.id !== +req.params.id);
 
@@ -63,7 +71,8 @@ app.delete('/courses/:id', (req, res) => {
     }
     res.sendStatus(HTTP_STATUSES.OK_200);
 });
-app.put('/courses/:id', (req, res) => {
+app.put('/courses/:id', (req: Request<{id: string}, {}, {title: string}>,
+                         res) => {
     if (!req.body.title) {
         res.sendStatus(HTTP_STATUSES.BAD_REQUEST);
         return;
