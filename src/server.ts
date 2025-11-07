@@ -37,7 +37,12 @@ app.get('/courses', (req: Request<{}, {}, {}, QueryCoursesModel>,
     }
     res
         .status(HTTP_STATUSES.OK_200)
-        .json(foundCourses);
+        .json(foundCourses.map(dbCourse => {
+            return {
+                id: dbCourse.id,
+                title: dbCourse.title
+            }
+        }));
 });
 app.get('/courses/:id', (req: Request<{id: string}>,
                          res: Response<CourseViewModel>) => {
@@ -45,10 +50,14 @@ app.get('/courses/:id', (req: Request<{id: string}>,
     if (!foundCourse) {
         res
             .sendStatus(HTTP_STATUSES.NOT_FOUND);
+            return;
     }
     res
         .status(HTTP_STATUSES.OK_200)
-        .json(foundCourse);
+        .json({
+            id: foundCourse.id,
+            title: foundCourse.title
+        });
 });
 app.post('/courses', (req: Request<{}, {}, CreateCourseModel>,
                       res: Response<CourseViewModel>) => {
@@ -63,7 +72,10 @@ app.post('/courses', (req: Request<{}, {}, CreateCourseModel>,
     db.courses.push(createdCourse);
     res
         .status(HTTP_STATUSES.CREATED_201)
-        .json(createdCourse);
+        .json({
+            id: createdCourse.id,
+            title: createdCourse.title
+        });
 });
 app.delete('/courses/:id', (req: Request<{id: string}>,
                             res) => {
