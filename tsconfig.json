@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "module": "ESNext", // Для поддержки ESM
+    "moduleResolution": "node", // Разрешение модулей как в Node.js
+    "target": "ESNext", // Поддержка последних возможностей JS
+    "esModuleInterop": true, // Поддержка импорта для CommonJS
+    "skipLibCheck": true, // Пропуск проверки типов в библиотеках
+    "strict": true, // Строгая типизация
+    "isolatedModules": true, // Каждый файл как независимый модуль
+    "resolveJsonModule": true,
+    "outDir": "./dist", // Папка для скомпилированных файлов
+    "sourceMap": false
+  },
+  "include": ["src", "__tests__"], // Папки для исходных и тестовых файлов
+  "exclude": ["node_modules", "dist", "__tests__", "src/models",
+    "types.ts"
+  ]
+}
+
+
