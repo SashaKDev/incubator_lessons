@@ -3,6 +3,7 @@ import {CreateCourseModel} from "./models/CreateCourseModel";
 import {UpdateCourseModel} from "./models/UpdateCourseModel";
 import {QueryCoursesModel} from "./models/QueryCoursesModel";
 import {CourseViewModel} from "./models/CourseViewModel";
+import {RequestWithBody, RequestWithBodyAndParams, RequestWithParams, RequestWithQuery} from "./types";
 
 export const app = express();
 const port = 3000;
@@ -29,11 +30,11 @@ const db: { courses: CourseType[] } = {
     ]
 }
 
-app.get('/courses', (req: Request<{}, {}, {}, QueryCoursesModel>,
+app.get('/courses', (req: RequestWithQuery<QueryCoursesModel>,
                      res: Response<CourseViewModel[]>) => {
     let foundCourses = db.courses;
     if (req.query.title) {
-        foundCourses = foundCourses.filter(c => c.title.includes(req.query.title as string));
+        foundCourses = foundCourses.filter(c => c.title.includes(req.query.title));
     }
     res
         .status(HTTP_STATUSES.OK_200)
@@ -44,13 +45,12 @@ app.get('/courses', (req: Request<{}, {}, {}, QueryCoursesModel>,
             }
         }));
 });
-app.get('/courses/:id', (req: Request<{id: string}>,
+app.get('/courses/:id', (req: RequestWithParams<{id: string}>,
                          res: Response<CourseViewModel>) => {
     const foundCourse = db.courses.find(c => c.id === +req.params.id);
     if (!foundCourse) {
-        res
-            .sendStatus(HTTP_STATUSES.NOT_FOUND);
-            return;
+        res.sendStatus(HTTP_STATUSES.NOT_FOUND);
+        return;
     }
     res
         .status(HTTP_STATUSES.OK_200)
@@ -59,7 +59,7 @@ app.get('/courses/:id', (req: Request<{id: string}>,
             title: foundCourse.title
         });
 });
-app.post('/courses', (req: Request<{}, {}, CreateCourseModel>,
+app.post('/courses', (req: RequestWithBody<CreateCourseModel>,
                       res: Response<CourseViewModel>) => {
     if (!req.body.title) {
         res.sendStatus(HTTP_STATUSES.BAD_REQUEST);
@@ -77,17 +77,18 @@ app.post('/courses', (req: Request<{}, {}, CreateCourseModel>,
             title: createdCourse.title
         });
 });
-app.delete('/courses/:id', (req: Request<{id: string}>,
+app.delete('/courses/:id', (req: RequestWithParams<{id: string}>,
                             res) => {
     const deletedCourse = db.courses.find(c => c.id === +req.params.id);
     db.courses = db.courses.filter(c => c.id !== +req.params.id);
 
     if (!deletedCourse) {
         res.sendStatus(HTTP_STATUSES.NOT_FOUND);
+        return;
     }
     res.sendStatus(HTTP_STATUSES.OK_200);
 });
-app.put('/courses/:id', (req: Request<{id: string}, {}, UpdateCourseModel>,
+app.put('/courses/:id', (req: RequestWithBodyAndParams<{id: string},UpdateCourseModel>,
                          res) => {
     if (!req.body.title) {
         res.sendStatus(HTTP_STATUSES.BAD_REQUEST);
