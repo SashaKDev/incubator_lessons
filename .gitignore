@@ -6,3 +6,4 @@ yarn.lock
 /dist/
 
 /jest.config.mjs
+/__tests__/
